@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atividade 1</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Estrutura básica de página</h1>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#container">2</a></li>
+            <li><a href="#container2">3</a></li>
+            <li><a href="#container3">4 e 5</a></li>
+            <li><a href="#container4">6 e 7</a></li>
+        </ul>
+    </nav>
+
+    <div class="container" id="container">
+        <h1 class="title">2. Manipulação de elementos com JavaScript</h1>
+        <form action="#" style="clear: both;">
+            <label for="cor">Mudar a Cor:</label>
+            <input type="color" id="cor" onchange="mudarCor();">
+        </form>
+    </div>
+
+    <div class="container" id="container2">
+        <h1 class="title">3. Inserir e remover elementos do DOM</h1>
+        <input type="text" id="itemInput" placeholder="Digite um item">
+        <button onclick="adicionarItem()">Adicionar Item</button>
+        <ul id="listaItens"></ul>
+    </div>
+
+    <div class="container" id="container3">
+        <h1 class="title">4. Consumir dados de uma API (GET)</h1>
+        <button onclick="buscarMensagem()">Buscar Mensagem</button>
+        <div id="mensagem"></div>
+
+
+        <h1 class="title">5. Enviar dados para a API (POST) </h1>
+        <form id="formulario">
+            <label for="nome">Nome:</label>
+            <input type="text" id="nome" required>
+
+            <label for="email">E-mail:</label>
+            <input type="email" id="email" required>
+
+            <button type="submit">Enviar</button>
+        </form>
+
+        <div id="resposta"></div>
+
+    </div>
+
+    <div class="container" id="container4">
+        <h1 class="title">6. Exibindo dados retornados em tabela</h1>
+        <button onclick="carregarDados()">Carregar Dados</button>
+        <button onclick="filtrarDados()">Filtrar (Idade > 25)</button>
+        <button onclick="resetarFiltro()">Resetar Filtro</button>
+
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Idade</th>
+                </tr>
+            </thead>
+            <tbody id="tabelaDados">
+            </tbody>
+        </table>
+
+
+
+    </div>
+
+
+    <footer id="footer">
+        <ul>
+            <li>Contato</li>
+            <li><a href=""> GitHub</a></li>
+            <li><a href=""> Instagram</a></li>
+            <li><a href="">+55(00)00000-0000</a></li>
+            <li><a href=""> xxxxx@xxxx.com</a></li>
+        </ul>
+    </footer>
+
+
+</body>
+
+<script>
+    //Ex6
+    var dadosOriginais = []; // Variável para armazenar os dados sem filtro
+
+function carregarDados() {
+    fetch("https://demo.mockable.io/tabela") // Substitua pela sua URL do Mockable.io
+        .then(response => response.json())
+        .then(data => {
+            dadosOriginais = data; // Armazena os dados originais
+            exibirDados(data);
+        })
+        .catch(error => {
+            console.error("Erro ao buscar os dados:", error);
+        });
+}
+
+function exibirDados(lista) {
+    var tabela = document.getElementById("tabelaDados");
+    tabela.innerHTML = ""; // Limpa a tabela antes de adicionar os novos dados
+
+    lista.forEach(item => {
+        var linha = document.createElement("tr");
+
+        linha.innerHTML = `
+            <td>${item.nome}</td>
+            <td>${item.email}</td>
+            <td>${item.idade}</td>
+        `;
+
+        tabela.appendChild(linha);
+    });
+}
+
+//Ex7
+function filtrarDados() {
+    var filtrados = dadosOriginais.filter(item => item.idade > 25); // Filtra os dados
+    exibirDados(filtrados); // Exibe apenas os filtrados
+}
+
+function resetarFiltro() {
+    exibirDados(dadosOriginais); // Restaura os dados originais
+}
+
+
+    //Ex 5
+    document.getElementById("formulario").addEventListener("submit", function (event) {
+        event.preventDefault();
+
+        var nome = document.getElementById("nome").value.trim();
+        var email = document.getElementById("email").value.trim();
+
+        if (nome === "" || email === "") {
+            document.getElementById("resposta").textContent = "Por favor, preencha todos os campos.";
+            return;
+        }
+
+        fetch("http://demo8081097.mockable.io/post", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ nome: nome, email: email })
+        })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("resposta").textContent = data.mensagem;
+            })
+            .catch(error => {
+                console.error("Erro ao enviar os dados:", error);
+            });
+
+        document.getElementById("formulario").reset();
+    });
+
+    //Ex4
+    function buscarMensagem() {
+        fetch("http://demo8081097.mockable.io/exercicio")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("mensagem").textContent = data.mensagem;
+            })
+            .catch(error => {
+                console.error("Erro ao buscar a mensagem:", error);
+            });
+    }
+
+    //Ex3
+    function adicionarItem() {
+        var input = document.getElementById("itemInput");
+        var texto = input.value;
+
+        if (texto === "") {
+            alert("Digite um item antes de adicionar.");
+            return;
+        }
+
+        var lista = document.getElementById("listaItens");
+        var novoItem = document.createElement("li");
+        novoItem.textContent = texto;
+
+        // REMOVER ITEM
+        novoItem.ondblclick = function () {
+            lista.removeChild(novoItem);
+        };
+
+        lista.appendChild(novoItem);
+        input.value = ""; // LIMPA O CAMPO APÓS ADICIONAR
+    }
+
+    //Ex2
+    function mudarCor() {
+        var cor = document.getElementById("cor").value;
+        document.getElementById("container").style.backgroundColor = cor;
+    }
+</script>
+
+</html>
