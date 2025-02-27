@@ -1,0 +1,13 @@
+body{
+    background-color: bisque;
+}
+
+.temaEscuro{
+    background-color: #333;
+    color: aliceblue;
+}
+
+.temaClaro{
+    background-color: aliceblue;
+    color: #333;
+}

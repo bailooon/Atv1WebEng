@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Correção</title>
+    <link rel="stylesheet" href="styles/style.css">
+</head>
+
+<body id="tema" class="temaClaro" onload= carregar()>
+    <header>
+        <h2>Correção dos exercícios</h2>
+    </header>
+    <input type="button" value="tema" onclick="trocarTema()">
+    <nav>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Sobre nós</a></li>
+        </ul>
+    </nav>
+    <section>
+        <h2>Exercício 3</h2>
+        <p><input type="text" id="texto"></p>
+        <input type="button" onclick="adicionarItem()" value="Adicionar Item">
+        <ul id="lista">
+        </ul>
+
+        <h2>Exercicio 4</h2>
+        <div id="mostrarMensagem"></div>
+        <input type="button" onclick="trazerObjetoResponse()" value="testar response">
+    </section>
+</body>
+
+<script>
+    //localStorage é o "banco" local do browser
+    function carregar(){
+        let tema = localStorage.getItem("tema");
+        if(tema){
+            if(tema == "temaClaro"){
+                document.getElementById("tema").classList.remove("temaEscuro");
+                document.getElementById("tema").classList.add(tema);
+            }else{
+                document.getElementById("tema").classList.remove("temaClaro");
+                document.getElementById("tema").classList.add(tema);
+            }
+        }
+    }
+
+    let tema = localStorage.getItem('tema')
+    if(tema){
+        document.getElementById("tema").classList.add(tema)
+    }
+    function trocarTema(){
+        let temaElement = document.getElementById("tema");
+        if(temaElement.classList.contains("temaClaro")){
+            temaElement.classList.remove("temaClaro");
+            temaElement.classList.add("temaEscuro");
+            localStorage.setItem("tema", "temaEscuro");
+        }else{
+            temaElement.classList.remove("temaEscuro");
+            temaElement.classList.add("temaClaro");
+            localStorage.setItem("tema", "temaClaro");
+        }
+
+    }
+
+    function adicionarItem(){
+        const texto = document.getElementById("texto");
+        let lista = document.getElementById("lista");
+        let item = `<li>${texto.value}</li>`;
+        lista.innerHTML += item
+        texto.value = "";
+    }
+
+    const objetoResponse = {};
+    objetoResponse.mensagem = "Olá, este é um retorno de teste"
+
+    function trazerObjetoResponse() {
+        fetch("https://67bfa3c4b9d02a9f2246bf06.mockapi.io/mensagem")
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            document.getElementById("mostrarMensagem").innerHTML = data [0].mensagem + " - id: " + data[0]
+        })
+    }
+</script>
+
+</html>
